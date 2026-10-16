@@ -1,26 +1,54 @@
 @import "tailwindcss";
 
+@theme {
+  --color-brand-50: #fff4ed;
+  --color-brand-100: #ffe6d5;
+  --color-brand-200: #fec9aa;
+  --color-brand-300: #fda374;
+  --color-brand-400: #fb733c;
+  --color-brand-500: #f45b14;
+  --color-brand-600: #e5400b;
+  --color-brand-700: #be2f0b;
+  --color-brand-800: #972711;
+  --color-brand-900: #7a2312;
+  --color-ink: #1c1917;
+  --color-muted: #6b6560;
+  --color-line: #ece7e2;
+  --color-canvas: #f7f5f3;
+  --font-sans: var(--font-inter), var(--font-devanagari), ui-sans-serif, system-ui, sans-serif;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-tap-highlight-color: transparent;
 }
+
+/* Devanagari needs extra line height so matras do not clip. */
+:lang(hi) body {
+  line-height: 1.6;
+}
+
+.leaflet-container {
+  font-family: var(--font-sans);
+}
+
+@keyframes radar {
+  0% { transform: scale(0.4); opacity: 0.6; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+.radar-ring {
+  animation: radar 2.4s ease-out infinite;
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
