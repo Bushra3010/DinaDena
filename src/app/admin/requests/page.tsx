@@ -56,7 +56,7 @@ export default function LiveRequests() {
             const c = data.names.find((n) => n.id === j.customer_id);
             const bs = data.bookings.filter((b) => b.job_id === j.id && ['accepted', 'on_the_way', 'in_progress', 'completed'].includes(b.status));
             return (
-              <tr key={j.id} className="hover:bg-stone-50">
+              <tr key={j.id} className="hover:bg-brand-50">
                 <Td className="font-mono text-xs font-semibold">{j.code}</Td>
                 <Td><p className="font-medium">{c?.full_name}</p><p className="text-xs text-muted">{c?.phone}</p></Td>
                 <Td>{j.area}</Td>

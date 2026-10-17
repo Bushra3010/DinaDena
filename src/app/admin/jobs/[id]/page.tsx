@@ -96,8 +96,8 @@ export default function AdminJob() {
         <ol className="grid grid-cols-3 gap-y-4 sm:grid-cols-6">
           {stages.map((s, i) => (
             <li key={s.label} className="relative flex flex-col items-center text-center">
-              {i > 0 && <span className={cx('absolute right-1/2 top-4 h-0.5 w-full -translate-y-1/2', s.at ? 'bg-brand-500' : 'bg-stone-200')} />}
-              <span className={cx('relative z-10 flex size-8 items-center justify-center rounded-full', s.at ? 'bg-brand-500 text-white' : 'bg-stone-200 text-stone-500')}>
+              {i > 0 && <span className={cx('absolute right-1/2 top-4 h-0.5 w-full -translate-y-1/2', s.at ? 'bg-brand-500' : 'bg-slate-200')} />}
+              <span className={cx('relative z-10 flex size-8 items-center justify-center rounded-full', s.at ? 'bg-brand-500 text-white' : 'bg-slate-200 text-slate-500')}>
                 {s.at ? <Check className="size-4" /> : i + 1}
               </span>
               <span className="mt-1.5 text-xs font-semibold">{s.label}</span>

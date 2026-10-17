@@ -78,7 +78,7 @@ export default function PayPage() {
   }
 
   return (
-    <div className="min-h-dvh bg-stone-100">
+    <div className="min-h-dvh bg-brand-50">
       <TopBar title={t('upi_gateway')} back={`/c/jobs/${id}`} />
       <div className="space-y-4 p-4">
         <Card className="flex items-center gap-3 p-4">

@@ -4,7 +4,7 @@ import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import {
   CircleCheck, Clock, IndianRupee, MapPin, MessageSquare, Navigation, Phone, ShieldCheck,
-  Timer, TriangleAlert,
+  Timer, TriangleAlert, Wallet,
 } from 'lucide-react';
 import { CategoryIcon } from '@/components/CategoryIcon';
 import { ComplaintButton } from '@/components/ComplaintButton';
@@ -26,7 +26,7 @@ const EXTRA_MIN = 30;
 export default function WorkerBooking() {
   const { id } = useParams<{ id: string }>();
   const { profile } = useAuth();
-  const { t, lang, catName } = useI18n();
+  const { t, lang } = useI18n();
   const categories = useCategories();
   const [otp, setOtp] = useState('');
   const [busy, setBusy] = useState<string | null>(null);
@@ -121,7 +121,7 @@ export default function WorkerBooking() {
         <CategoryIcon icon={cat?.icon} boxed />
         <div className="min-w-0 flex-1">
           <p className="font-bold">{job.title}</p>
-          <p className="text-sm text-muted">{catName(cat)} · {job.code}</p>
+          <p className="mt-1 text-3xl font-bold tracking-tight text-brand-500">{rupees(b.amount)} <span className="text-sm font-normal text-muted">{t('per_worker')}</span></p>
         </div>
         <StatusPill status={b.status} />
       </div>
@@ -163,7 +163,7 @@ export default function WorkerBooking() {
               {job.workers_needed > 1 && <p className="text-sm text-muted">{t('slots_filled', { n: filled, m: job.workers_needed })}</p>}
             </div>
             {job.workers_needed > 1 && (
-              <div className="h-2 overflow-hidden rounded-full bg-stone-200">
+              <div className="h-2 overflow-hidden rounded-full bg-slate-200">
                 <div className="h-full rounded-full bg-brand-500" style={{ width: `${(filled / job.workers_needed) * 100}%` }} />
               </div>
             )}
@@ -203,14 +203,13 @@ export default function WorkerBooking() {
         {b.status === 'in_progress' && (
           <>
             {jobCard}
-            {customerCard}
-            <Card className="border-brand-200 bg-brand-50 p-4">
+            <Card className="worker-timer p-5">
               <p className="mb-2 font-bold">{t('work_in_progress')}</p>
               <div className="flex items-center gap-4">
                 <Timer className="size-9 text-brand-600" />
                 <div className="flex-1">
                   <p className="text-xs text-muted">{t('elapsed_time')}</p>
-                  <p className="text-2xl font-black tabular-nums">{elapsed(b.check_in_at!, now)}</p>
+                  <p className="text-5xl font-bold tracking-tight tabular-nums">{elapsed(b.check_in_at!, now)}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-xs text-muted">{t('estimated_time')}</p>
@@ -218,7 +217,9 @@ export default function WorkerBooking() {
                 </div>
               </div>
             </Card>
-            <Card className="border-sky-200 bg-sky-50/60 p-4">
+            {customerCard}
+            <Card className="flex items-center gap-3 p-4"><Wallet className="size-12 rounded-full bg-brand-50 p-3 text-brand-500" /><div><p className="text-sm font-bold">{lang === 'hi' ? 'अनुमानित कमाई' : 'Expected earnings'}</p><p className="mt-1 text-3xl font-bold text-brand-500">{rupees(b.amount)} <span className="text-sm font-normal text-muted">{t('per_worker')}</span></p></div></Card>
+            <Card className="border-brand-200 bg-brand-50 p-4">
               <p className="font-bold text-sky-900">{t('need_more_time')}</p>
               {b.extra_minutes_requested > 0 ? (
                 <p className="mt-1 text-sm text-sky-900">{t('extra_pending', { n: b.extra_minutes_requested })}</p>

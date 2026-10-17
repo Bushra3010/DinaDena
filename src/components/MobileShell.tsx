@@ -21,17 +21,18 @@ export function MobileShell({ role, nav, children, overlay }: { role: Role; nav:
   const hideNav = !nav.some((n) => pathname === n.href);
 
   return (
-    <div className="min-h-dvh bg-stone-200/60">
-      <div className="relative mx-auto flex min-h-dvh w-full max-w-[440px] flex-col bg-canvas shadow-xl shadow-stone-300/40">
+    <div className={cx("app-shell", role === "worker" && "worker-theme")}>
+      <div className="mobile-frame relative mx-auto flex min-h-dvh w-full max-w-[440px] flex-col bg-canvas">
         {!allowed ? <PageLoader /> : (
           <>
             <main className={cx('flex-1', !hideNav && 'pb-20')}>{children}</main>
             {!hideNav && (
-              <nav className="fixed bottom-0 left-1/2 z-30 flex w-full max-w-[440px] -translate-x-1/2 border-t border-line bg-white pb-[env(safe-area-inset-bottom)]">
+              <nav aria-label="Main navigation" className="app-nav fixed bottom-0 left-1/2 z-30 flex w-full max-w-[440px] -translate-x-1/2 border-t border-line bg-white pb-[env(safe-area-inset-bottom)]">
                 {nav.map((n) => {
                   const active = n.exact ? pathname === n.href : pathname.startsWith(n.href);
                   return (
                     <Link key={n.href} href={n.href}
+                      aria-current={active ? 'page' : undefined}
                       className={cx('relative flex min-h-16 flex-1 flex-col items-center justify-center gap-1 text-[11px] font-semibold',
                         active ? 'text-brand-500' : 'text-muted')}>
                       <n.icon className="size-5.5" aria-hidden />

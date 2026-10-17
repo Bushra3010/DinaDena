@@ -122,7 +122,7 @@ function Login() {
   const resendLeft = Math.max(0, RESEND_S - Math.floor((now - sentAt) / 1000));
 
   return (
-    <div className="mx-auto min-h-dvh max-w-[440px] bg-white">
+    <div className="auth-frame mx-auto min-h-dvh max-w-[440px] bg-white">
       <div className="px-5 pb-10 pt-8">
         <Logo sub={t('app_tagline')} />
         {usingMock && (
@@ -145,7 +145,7 @@ function Login() {
             </div>
             <Field label={t('mobile_number')} htmlFor="phone" error={error}>
               <div className="flex gap-2">
-                <span className="flex min-h-11 items-center rounded-xl border border-line bg-stone-50 px-3 font-semibold">+91</span>
+                <span className="flex min-h-11 items-center rounded-xl border border-line bg-brand-50/50 px-3 font-semibold">+91</span>
                 <Input id="phone" inputMode="numeric" autoComplete="tel-national" placeholder="98765 43210" maxLength={10}
                   value={phone} onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))} autoFocus />
               </div>

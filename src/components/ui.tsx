@@ -15,13 +15,13 @@ export const cx = (...c: (string | false | null | undefined)[]) => c.filter(Bool
 
 type Variant = 'primary' | 'outline' | 'soft' | 'ghost' | 'danger' | 'success' | 'dark';
 const variants: Record<Variant, string> = {
-  primary: 'bg-brand-500 text-white hover:bg-brand-600 active:bg-brand-700 shadow-sm shadow-brand-500/20',
-  outline: 'border border-line bg-white text-ink hover:bg-stone-50',
+  primary: 'app-button-primary bg-brand-500 text-white hover:bg-brand-600 active:bg-brand-700 shadow-sm shadow-brand-500/20',
+  outline: 'border border-brand-300 bg-white text-brand-800 hover:bg-brand-50',
   soft: 'bg-brand-50 text-brand-700 hover:bg-brand-100',
-  ghost: 'text-ink hover:bg-stone-100',
-  danger: 'border border-red-200 bg-white text-red-600 hover:bg-red-50',
-  success: 'bg-emerald-600 text-white hover:bg-emerald-700',
-  dark: 'bg-ink text-white hover:bg-stone-800',
+  ghost: 'text-ink hover:bg-brand-50',
+  danger: 'border border-red-200 bg-white text-red-700 hover:bg-red-50',
+  success: 'bg-emerald-700 text-white hover:bg-emerald-800',
+  dark: 'app-button-dark bg-ink text-white hover:bg-brand-900',
 };
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -40,7 +40,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       ref={ref}
       disabled={disabled || loading}
       className={cx(
-        'inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-colors',
+        'inline-flex items-center justify-center gap-2 app-button rounded-xl font-semibold transition-colors',
         'disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500',
         size === 'sm' && 'min-h-9 px-3 text-sm',
         size === 'md' && 'min-h-11 px-4 text-sm',
@@ -65,7 +65,7 @@ export function LinkButton({ href, variant = 'primary', size = 'md', full, icon,
     <Link
       href={href}
       className={cx(
-        'inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-colors',
+        'inline-flex items-center justify-center gap-2 app-button rounded-xl font-semibold transition-colors',
         size === 'sm' && 'min-h-9 px-3 text-sm',
         size === 'md' && 'min-h-11 px-4 text-sm',
         size === 'lg' && 'min-h-13 px-5 text-base',
@@ -81,7 +81,7 @@ export function LinkButton({ href, variant = 'primary', size = 'md', full, icon,
 }
 
 export function Card({ className, children, ...rest }: { className?: string; children: ReactNode } & React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cx('rounded-2xl border border-line bg-white', className)} {...rest}>{children}</div>;
+  return <div className={cx('app-card rounded-2xl border border-line bg-white', className)} {...rest}>{children}</div>;
 }
 
 type Tone = 'brand' | 'green' | 'red' | 'amber' | 'blue' | 'gray' | 'purple';
@@ -91,7 +91,7 @@ const tones: Record<Tone, string> = {
   red: 'bg-red-50 text-red-700 ring-red-200',
   amber: 'bg-amber-50 text-amber-800 ring-amber-200',
   blue: 'bg-sky-50 text-sky-700 ring-sky-200',
-  gray: 'bg-stone-100 text-stone-700 ring-stone-200',
+  gray: 'bg-brand-50 text-slate-700 ring-stone-200',
   purple: 'bg-violet-50 text-violet-700 ring-violet-200',
 };
 
@@ -128,8 +128,8 @@ export function Field({ label, hint, error, children, htmlFor }: {
   );
 }
 
-const inputCls = 'w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-[15px] text-ink placeholder:text-stone-400 ' +
-  'focus:border-brand-400 focus:outline-none focus:ring-3 focus:ring-brand-100 disabled:bg-stone-50 min-h-11';
+const inputCls = 'app-input w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-[15px] text-ink placeholder:text-slate-400 ' +
+  'focus:border-brand-400 focus:outline-none focus:ring-3 focus:ring-brand-100 disabled:bg-brand-50/50 min-h-11';
 
 export const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(function Input(
   { className, ...rest }, ref) {
@@ -137,7 +137,7 @@ export const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputE
 });
 
 export function Select({ className, children, ...rest }: SelectHTMLAttributes<HTMLSelectElement>) {
-  return <select className={cx(inputCls, 'appearance-none bg-[url("data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 width=%2716%27 height=%2716%27 fill=%27none%27 stroke=%27%236b6560%27 stroke-width=%272%27 viewBox=%270 0 24 24%27><path d=%27m6 9 6 6 6-6%27/></svg>")] bg-[length:16px] bg-[right_12px_center] bg-no-repeat pr-9', className)} {...rest}>{children}</select>;
+  return <select className={cx(inputCls, 'appearance-none bg-[url("data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 width=%2716%27 height=%2716%27 fill=%27none%27 stroke=%27%235d7a9a%27 stroke-width=%272%27 viewBox=%270 0 24 24%27><path d=%27m6 9 6 6 6-6%27/></svg>")] bg-[length:16px] bg-[right_12px_center] bg-no-repeat pr-9', className)} {...rest}>{children}</select>;
 }
 
 export function Textarea({ className, ...rest }: TextareaHTMLAttributes<HTMLTextAreaElement>) {
@@ -145,7 +145,6 @@ export function Textarea({ className, ...rest }: TextareaHTMLAttributes<HTMLText
 }
 
 export function Avatar({ name, url, size = 44, className }: { name?: string | null; url?: string | null; size?: number; className?: string }) {
-  const hue = [...(name || '?')].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 360, 7);
   if (url) {
     // eslint-disable-next-line @next/next/no-img-element
     return <img src={url} alt={name || ''} width={size} height={size} className={cx('shrink-0 rounded-full object-cover', className)} style={{ width: size, height: size }} />;
@@ -153,8 +152,8 @@ export function Avatar({ name, url, size = 44, className }: { name?: string | nu
   return (
     <div
       aria-hidden
-      className={cx('flex shrink-0 items-center justify-center rounded-full font-bold text-white', className)}
-      style={{ width: size, height: size, fontSize: size * 0.38, background: `linear-gradient(135deg, hsl(${hue} 55% 52%), hsl(${(hue + 30) % 360} 60% 42%))` }}
+      className={cx('flex shrink-0 items-center justify-center rounded-full bg-brand-100 font-bold text-ink', className)}
+      style={{ width: size, height: size, fontSize: size * 0.38 }}
     >
       {initials(name)}
     </div>
@@ -227,13 +226,13 @@ export function TopBar({ title, back, right, sub }: { title: ReactNode; back?: s
   const router = useRouter();
   const { t } = useI18n();
   return (
-    <header className="sticky top-0 z-20 flex min-h-14 items-center gap-2 border-b border-line bg-white/95 px-2 backdrop-blur">
+    <header className="app-topbar sticky top-0 z-20 flex min-h-14 items-center gap-2 border-b border-line bg-white/95 px-2 backdrop-blur">
       {back ? (
         <button
           type="button"
           aria-label={t('back')}
           onClick={() => (back === true ? router.back() : router.push(back))}
-          className="flex size-11 items-center justify-center rounded-full hover:bg-stone-100"
+          className="flex size-11 items-center justify-center rounded-full hover:bg-brand-50"
         >
           <ArrowLeft className="size-5" />
         </button>
@@ -257,7 +256,7 @@ export function Toggle({ checked, onChange, label, disabled }: { checked: boolea
       disabled={disabled}
       onClick={() => onChange(!checked)}
       className={cx('relative inline-flex h-8 w-14 shrink-0 items-center rounded-full transition-colors disabled:opacity-50',
-        checked ? 'bg-emerald-500' : 'bg-stone-300')}
+        checked ? 'bg-emerald-700' : 'bg-slate-300')}
     >
       <span className={cx('inline-block size-6 rounded-full bg-white shadow transition-transform', checked ? 'translate-x-7' : 'translate-x-1')} />
     </button>
@@ -268,7 +267,7 @@ export function Segmented<T extends string>({ value, onChange, options, classNam
   value: T; onChange: (v: T) => void; options: { value: T; label: ReactNode }[]; className?: string;
 }) {
   return (
-    <div className={cx('flex gap-1 rounded-xl bg-stone-100 p-1', className)} role="tablist">
+    <div className={cx('app-segmented flex gap-1 rounded-xl bg-brand-50 p-1', className)} role="tablist">
       {options.map((o) => (
         <button key={o.value} type="button" role="tab" aria-selected={value === o.value} onClick={() => onChange(o.value)}
           className={cx('flex min-h-9 flex-1 items-center justify-center gap-1.5 rounded-lg px-2 text-sm font-semibold transition-colors',
@@ -283,7 +282,7 @@ export function Segmented<T extends string>({ value, onChange, options, classNam
 export function Chip({ active, onClick, children }: { active?: boolean; onClick?: () => void; children: ReactNode }) {
   return (
     <button type="button" onClick={onClick} aria-pressed={active}
-      className={cx('inline-flex min-h-9 items-center gap-1.5 whitespace-nowrap rounded-full border px-3.5 text-sm font-medium transition-colors',
+      className={cx('app-chip inline-flex min-h-9 items-center gap-1.5 whitespace-nowrap rounded-full border px-3.5 text-sm font-medium transition-colors',
         active ? 'border-brand-500 bg-brand-500 text-white' : 'border-line bg-white text-ink hover:border-brand-300')}>
       {children}
     </button>
@@ -310,7 +309,7 @@ export function Modal({ open, onClose, title, children, dismissable = true }: {
       {open && (
         <div className="relative p-5">
           {dismissable && (
-            <button type="button" onClick={onClose} aria-label="Close" className="absolute right-3 top-3 flex size-10 items-center justify-center rounded-full hover:bg-stone-100">
+            <button type="button" onClick={onClose} aria-label="Close" className="absolute right-3 top-3 flex size-10 items-center justify-center rounded-full hover:bg-brand-50">
               <X className="size-5" />
             </button>
           )}

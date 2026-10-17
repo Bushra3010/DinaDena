@@ -49,7 +49,7 @@ export default function Earnings() {
       <TopBar title={t('nav_earnings')} />
       <div className="space-y-4 p-4">
         <Card className="overflow-hidden">
-          <div className="bg-gradient-to-br from-brand-500 to-brand-700 p-5 text-white">
+          <div className="ocean-panel p-5 text-white">
             <p className="flex items-center gap-2 text-sm text-white/85"><Wallet className="size-4" />{t('total_earnings')}</p>
             <p className="mt-1 text-3xl font-black">{rupees(data?.balance ?? 0)}</p>
           </div>

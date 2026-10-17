@@ -2,17 +2,17 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { BadgeCheck, Bell, ChevronRight, CircleX, Clock, Star, Wallet } from 'lucide-react';
+import { ArrowRight, Bell, ChevronRight, CircleX, ClipboardCheck, Clock, MapPin, Star } from 'lucide-react';
 import { CategoryIcon } from '@/components/CategoryIcon';
-import { Logo } from '@/components/Logo';
+import { WorkerJobCard } from '@/components/worker/WorkerJobCard';
 import { useUnreadCount } from '@/components/MobileShell';
-import { Alert, Avatar, Button, Card, Modal, PageLoader, SectionTitle, StatusPill, Toggle } from '@/components/ui';
+import { Alert, Button, Card, Modal, PageLoader, SectionTitle, StatusPill, Toggle } from '@/components/ui';
 import { useAuth } from '@/lib/auth';
 import { dateTime, rupees } from '@/lib/format';
 import { useCategories, useLoad, useRealtime } from '@/lib/hooks';
 import { useI18n } from '@/lib/i18n';
 import { rpc, supabase, usingMock } from '@/lib/supabase';
-import type { Booking, Job, LedgerEntry } from '@/lib/types';
+import type { Booking, Job, LedgerEntry, NearbyJob } from '@/lib/types';
 import { useMyWorker } from '@/lib/worker';
 
 export default function WorkerHome() {
@@ -41,12 +41,11 @@ export default function WorkerHome() {
   useRealtime('bookings', `worker_id=eq.${profile!.id}`, reload);
   useRealtime('notifications', `user_id=eq.${profile!.id}`, reloadMe);
 
+  const { data: nearby, reload: reloadNearby } = useLoad(() => rpc<NearbyJob[]>('nearby_open_jobs', { p_radius_km: 5 }), [profile?.id]);
+  useRealtime('jobs', 'status=eq.open', reloadNearby);
+
   if (!me) return <PageLoader />;
   const wp = me.profile;
-  const startOfDay = new Date();
-  startOfDay.setHours(0, 0, 0, 0);
-  const today = data?.ledger.filter((l) => new Date(l.created_at) >= startOfDay) ?? [];
-  const todayTotal = today.reduce((s, l) => s + l.amount, 0);
   const weekTotal = data?.ledger.reduce((s, l) => s + l.amount, 0) ?? 0;
 
   async function setAvailable(v: boolean) {
@@ -61,27 +60,20 @@ export default function WorkerHome() {
   return (
     <div className="pb-6">
       <header className="flex items-center justify-between bg-white px-4 py-3">
-        <Logo />
-        <Link href="/w/notifications" aria-label={t('notifications')} className="relative flex size-11 items-center justify-center rounded-full hover:bg-stone-100">
+        <Link href="/w" className="worker-wordmark">DiNaDeNa</Link>
+        <span className="ml-auto mr-4 flex items-center gap-1.5 text-sm"><MapPin className="size-5 text-brand-500" />Jaipur</span>
+        <Link href="/w/notifications" aria-label={t('notifications')} className="relative flex size-11 items-center justify-center rounded-full hover:bg-brand-50">
           <Bell className="size-5.5" />
           {unread > 0 && <span className="absolute right-2.5 top-2.5 size-2.5 rounded-full bg-brand-500 ring-2 ring-white" />}
         </Link>
       </header>
 
       <div className="space-y-4 p-4">
-        <Link href="/w/profile">
-          <Card className="flex items-center gap-3 p-4">
-            <Avatar name={profile?.full_name} url={profile?.avatar_url} size={60} />
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-lg font-bold">{profile?.full_name}</p>
-              {wp.verified ? (
-                <p className="flex items-center gap-1 text-sm font-semibold text-emerald-700"><BadgeCheck className="size-4" />{t('verified_worker')}</p>
-              ) : <StatusBadge status={wp.status} />}
-              <p className="flex items-center gap-1 text-sm text-muted"><Star className="size-3.5 fill-amber-400 text-amber-400" />{Number(wp.rating_avg).toFixed(1)} ({t('jobs_completed_n', { n: wp.jobs_completed })})</p>
-            </div>
-            <ChevronRight className="size-5 text-muted" />
-          </Card>
-        </Link>
+        <section className="worker-greeting" style={{ padding: '12px 16px' }}>
+          <p className="text-sm">{lang === 'hi' ? 'नमस्ते,' : 'Good ' + (new Date().getHours() < 12 ? 'morning,' : new Date().getHours() < 17 ? 'afternoon,' : 'evening,')}</p>
+          <h1 className="mt-0.5 text-2xl font-bold leading-tight tracking-tight">{profile?.full_name?.split(' ')[0]}</h1>
+          <p className="mt-1 text-[13px] leading-snug text-muted">{lang === 'hi' ? 'स्थानीय काम। अपने लोग। बेहतर दिन।' : 'Find local work. Real people. Better days.'}</p>
+        </section>
 
         {wp.status === 'pending' && (
           <Alert tone="amber" icon={<Clock className="size-5" />} title={t('under_verification')}>
@@ -102,10 +94,11 @@ export default function WorkerHome() {
         {wp.status === 'rejected' && <Alert tone="red" icon={<CircleX className="size-5" />} title={t('profile_rejected')}>{wp.rejection_reason}</Alert>}
         {wp.status === 'suspended' && <Alert tone="red" icon={<CircleX className="size-5" />} title={t('profile_suspended')}>{wp.rejection_reason}</Alert>}
 
-        <Card className="flex items-center gap-3 p-4">
+        <Card className="flex items-center gap-3 p-3.5">
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-emerald-100"><span className={wp.available ? "size-3 rounded-full bg-emerald-500" : "size-3 rounded-full bg-slate-400"} /></span>
           <div className="flex-1">
             <p className="font-bold">{t('available_for_work')}</p>
-            <p className="text-sm text-muted">{wp.verified ? t('available_sub') : t('available_locked')}</p>
+            <p className="text-xs text-muted">{wp.verified ? t('available_sub') : t('available_locked')}</p>
           </div>
           <Toggle checked={wp.available} disabled={toggling} onChange={setAvailable} label={t('available_for_work')} />
         </Card>
@@ -134,25 +127,20 @@ export default function WorkerHome() {
           </section>
         )}
 
-        <Link href="/w/earnings">
-          <Card className="flex items-center gap-4 border-brand-200 bg-brand-50 p-4">
-            <div className="flex size-12 items-center justify-center rounded-2xl bg-white text-brand-600"><Wallet className="size-6" /></div>
-            <div className="flex-1">
-              <p className="text-sm text-muted">{t('todays_earnings')}</p>
-              <p className="text-2xl font-black">{rupees(todayTotal)}</p>
-            </div>
-            <span className="text-xs text-muted">{t('jobs_completed_n', { n: today.length })}</span>
-            <ChevronRight className="size-5 text-muted" />
-          </Card>
+        <Link href="/w/earnings" className="worker-earnings block">
+          <div><p className="text-sm">{t('this_week')}</p><p className="mt-1 text-4xl font-bold tracking-tight">{rupees(weekTotal)}</p></div>
+          <div className="worker-bars" aria-hidden>{[14, 24, 19, 34, 39, 54, 31].map((h, i) => <span key={i} style={{ height: h }} />)}</div>
+          <ChevronRight className="absolute right-4 top-4 size-7 rounded-full bg-white/15 p-1" />
         </Link>
-
+        <div className="grid grid-cols-2 gap-3">
+          <Link href="/w/bookings"><Card className="flex items-center gap-2.5 p-3"><ClipboardCheck className="size-9 shrink-0 rounded-full bg-brand-50 p-1.5 text-brand-500" /><div><p className="text-2xl font-bold">{wp.jobs_completed}</p><p className="text-[11px] text-muted">{t('jobs_done')}</p></div><ChevronRight className="ml-auto size-4 text-muted" /></Card></Link>
+          <Link href="/w/profile"><Card className="flex items-center gap-2.5 p-3"><Star className="size-9 shrink-0 rounded-full bg-brand-50 p-1.5 text-brand-500" /><div><p className="text-2xl font-bold">{Number(wp.rating_avg).toFixed(1)}</p><p className="text-[11px] text-muted">{t('rating')}</p></div><ChevronRight className="ml-auto size-4 text-muted" /></Card></Link>
+        </div>
         <section>
-          <SectionTitle>{t('quick_stats')} <span className="font-normal text-muted">({t('this_week')})</span></SectionTitle>
-          <div className="grid grid-cols-3 gap-2">
-            <Card className="p-3 text-center"><p className="text-xl font-black">{data?.weekJobs ?? 0}</p><p className="text-xs text-muted">{t('jobs_done')}</p></Card>
-            <Card className="p-3 text-center"><p className="text-xl font-black">{rupees(weekTotal)}</p><p className="text-xs text-muted">{t('total_earnings')}</p></Card>
-            <Card className="p-3 text-center"><p className="flex items-center justify-center gap-1 text-xl font-black"><Star className="size-4 fill-amber-400 text-amber-400" />{Number(wp.rating_avg).toFixed(1)}</p><p className="text-xs text-muted">{t('rating')}</p></Card>
-          </div>
+          <SectionTitle action={<Link href="/w/jobs" className="text-sm font-medium text-brand-500">{t('view_all')}</Link>}>{t('nearby_jobs')}</SectionTitle>
+          <div className="space-y-3">{nearby?.slice(0, 2).map((job) => <WorkerJobCard key={job.id} job={job} compact />)}</div>
+          {nearby?.length === 0 && <p className="py-4 text-sm text-muted">{t('no_nearby_jobs')}</p>}
+          <Link href="/w/jobs" className="worker-primary mt-3 flex min-h-13 items-center justify-center gap-3">{lang === 'hi' ? 'काम खोजें' : 'Explore jobs'}<ArrowRight className="size-5" /></Link>
         </section>
 
         <Modal open={lockedOpen} onClose={() => setLockedOpen(false)} title={t('under_verification')}>
@@ -170,23 +158,7 @@ export default function WorkerHome() {
           )}
         </Modal>
 
-        <section>
-          <SectionTitle>{t('skills')}</SectionTitle>
-          <div className="flex flex-wrap gap-2">
-            {categories.filter((c) => wp.category_ids.includes(c.id)).map((c) => (
-              <span key={c.id} className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-sm font-semibold ring-1 ring-line">
-                <CategoryIcon icon={c.icon} className="size-4 text-brand-500" />{lang === 'hi' ? c.name_hi : c.name_en}
-              </span>
-            ))}
-          </div>
-        </section>
       </div>
     </div>
   );
-}
-
-function StatusBadge({ status }: { status: string }) {
-  const { t } = useI18n();
-  const label = status === 'pending' ? t('under_verification') : status === 'rejected' ? t('profile_rejected') : t('profile_suspended');
-  return <p className="text-sm font-semibold text-amber-700">{label}</p>;
 }

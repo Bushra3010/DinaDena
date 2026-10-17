@@ -8,10 +8,11 @@ const icons: Record<string, LucideIcon> = {
 export const ICON_NAMES = Object.keys(icons);
 
 export function CategoryIcon({ icon, className, boxed }: { icon?: string; className?: string; boxed?: boolean }) {
-  const Icon = icons[icon ?? ''] ?? Hammer;
+  const category = icon && icons[icon] ? icon : 'hammer';
+  const Icon = icons[category];
   if (!boxed) return <Icon className={className} aria-hidden />;
   return (
-    <div className={cx('flex size-12 shrink-0 items-center justify-center rounded-2xl bg-brand-50 text-brand-600', className)}>
+    <div data-category-icon={category} className={cx('category-icon flex size-12 shrink-0 items-center justify-center rounded-full bg-brand-50 text-ink', className)}>
       <Icon className="size-6" aria-hidden />
     </div>
   );

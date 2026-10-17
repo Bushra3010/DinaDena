@@ -29,10 +29,10 @@ export default function Welcome() {
   ];
 
   return (
-    <div className="mx-auto flex min-h-dvh max-w-[440px] flex-col bg-white px-5 pb-8 pt-10">
+    <div className="auth-frame mx-auto flex min-h-dvh max-w-[440px] flex-col bg-white px-5 pb-8 pt-10">
       <Logo sub={t('app_tagline')} />
       <div className="mt-10">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-500 to-brand-700 p-6 text-white">
+        <div className="relative overflow-hidden rounded-3xl ocean-panel p-6 text-white">
           <div className="absolute -right-10 -top-10 size-40 rounded-full bg-white/10" />
           <div className="absolute -bottom-12 right-6 size-28 rounded-full bg-white/10" />
           <h1 className="relative text-[26px] font-extrabold leading-tight">{t('welcome_title')}</h1>

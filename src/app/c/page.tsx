@@ -48,7 +48,7 @@ export default function CustomerHome() {
       <header className="bg-white px-4 pb-4 pt-4">
         <div className="flex items-center justify-between">
           <Logo />
-          <Link href="/c/notifications" aria-label={t('notifications')} className="relative flex size-11 items-center justify-center rounded-full hover:bg-stone-100">
+          <Link href="/c/notifications" aria-label={t('notifications')} className="relative flex size-11 items-center justify-center rounded-full hover:bg-brand-50">
             <Bell className="size-5.5" />
             {unread > 0 && <span className="absolute right-2.5 top-2.5 size-2.5 rounded-full bg-brand-500 ring-2 ring-white" />}
           </Link>
@@ -65,11 +65,11 @@ export default function CustomerHome() {
             {AREAS.map((a) => <option key={a.name} value={a.name}>{a.name}, Jaipur</option>)}
           </Select>
         </div>
-        <p className="mt-2 text-lg font-bold">{t('hello', { name: firstName })}</p>
-        <form onSubmit={onSearch} className="mt-3 flex items-center gap-2 rounded-xl border border-line bg-stone-50 px-3">
+        <div className="customer-greeting mt-3"><p className="text-[28px] font-bold tracking-tight">{t('hello', { name: firstName })}</p><p className="mt-1 text-sm text-muted">{lang === 'hi' ? 'स्थानीय काम। अपने लोग। बेहतर दिन।' : 'Local help. Real people. Better days.'}</p></div>
+        <form onSubmit={onSearch} className="mt-3 flex items-center gap-2 rounded-xl border border-line bg-brand-50/50 px-3">
           <Search className="size-4.5 text-muted" />
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('search_placeholder')} aria-label={t('search')}
-            className="min-h-11 flex-1 bg-transparent text-[15px] outline-none placeholder:text-stone-400" />
+            className="min-h-11 flex-1 bg-transparent text-[15px] outline-none placeholder:text-slate-400" />
         </form>
       </header>
 
@@ -87,7 +87,7 @@ export default function CustomerHome() {
           </Link>
         )}
 
-        <Link href="/c/post" className="relative block overflow-hidden rounded-3xl bg-gradient-to-br from-brand-500 to-brand-600 p-5 text-white shadow-lg shadow-brand-500/25">
+        <Link href="/c/post" className="ocean-panel relative block overflow-hidden rounded-3xl p-5 text-white shadow-lg shadow-brand-500/25">
           <div className="absolute -right-6 -top-8 size-32 rounded-full bg-white/10" />
           <div className="absolute -bottom-10 right-10 size-24 rounded-full bg-white/10" />
           <div className="relative flex items-center gap-4">
@@ -103,7 +103,7 @@ export default function CustomerHome() {
 
         <Link href="/c/workers">
           <Card className="flex items-center gap-4 p-4">
-            <div className="flex size-12 items-center justify-center rounded-2xl bg-stone-100"><Users className="size-6 text-ink" /></div>
+            <div className="flex size-12 items-center justify-center rounded-2xl bg-brand-50"><Users className="size-6 text-ink" /></div>
             <div className="flex-1">
               <h2 className="font-bold">{t('daily_workers')}</h2>
               <p className="text-sm text-muted">{t('daily_workers_sub')}</p>

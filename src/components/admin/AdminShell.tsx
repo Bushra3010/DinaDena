@@ -54,8 +54,9 @@ export function AdminShell({ children }: { children: ReactNode }) {
         const count = n.badge ? counts?.[n.badge] ?? 0 : 0;
         return (
           <Link key={n.href} href={n.href} onClick={() => setOpen(false)}
-            className={cx('flex min-h-10 items-center gap-3 rounded-xl px-3 text-sm font-semibold transition-colors',
-              active ? 'bg-brand-500 text-white' : 'text-stone-600 hover:bg-stone-100 hover:text-ink')}>
+            aria-current={active ? 'page' : undefined}
+            className={cx('admin-nav-item flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-semibold transition-colors',
+              active ? 'bg-brand-500 text-white' : 'text-muted hover:bg-brand-50 hover:text-ink')}>
             <n.icon className="size-4.5" />
             <span className="flex-1">{n.label}</span>
             {count > 0 && <span className={cx('rounded-full px-1.5 text-xs', active ? 'bg-white/25' : 'bg-brand-100 text-brand-700')}>{count}</span>}
@@ -63,15 +64,15 @@ export function AdminShell({ children }: { children: ReactNode }) {
         );
       })}
       <button type="button" onClick={async () => { await signOut(); router.replace('/login?as=admin'); }}
-        className="mt-auto flex min-h-10 items-center gap-3 rounded-xl px-3 text-sm font-semibold text-stone-600 hover:bg-stone-100">
+        className="mt-auto flex min-h-10 items-center gap-3 rounded-xl px-3 text-sm font-semibold text-muted hover:bg-brand-50">
         <LogOut className="size-4.5" />Log out
       </button>
     </nav>
   );
 
   return (
-    <div className="min-h-dvh bg-canvas">
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 border-r border-line bg-white lg:block">{sidebar}</aside>
+    <div className="admin-shell min-h-dvh">
+      <aside className="admin-sidebar fixed inset-y-0 left-0 z-30 hidden w-60 border-r border-line bg-white lg:block">{sidebar}</aside>
       {open && (
         <div className="fixed inset-0 z-40 lg:hidden">
           <div className="absolute inset-0 bg-black/40" onClick={() => setOpen(false)} />
@@ -83,10 +84,10 @@ export function AdminShell({ children }: { children: ReactNode }) {
       )}
       <div className="lg:pl-60">
         <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-line bg-white/95 px-4 backdrop-blur lg:px-6">
-          <button type="button" aria-label="Open menu" onClick={() => setOpen(true)} className="flex size-10 items-center justify-center rounded-lg hover:bg-stone-100 lg:hidden"><Menu className="size-5" /></button>
+          <button type="button" aria-label="Open menu" onClick={() => setOpen(true)} className="flex size-10 items-center justify-center rounded-lg hover:bg-brand-50 lg:hidden"><Menu className="size-5" /></button>
           <p className="flex-1 text-sm text-muted">{new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
           <span className="relative"><Bell className="size-5 text-muted" />{unread > 0 && <span className="absolute -right-1 -top-1 size-2.5 rounded-full bg-brand-500" />}</span>
-          <Link href="/admin/profile" className="flex items-center gap-2 rounded-full pr-2 hover:bg-stone-100" aria-label="My profile">
+          <Link href="/admin/profile" className="flex items-center gap-2 rounded-full pr-2 hover:bg-brand-50" aria-label="My profile">
             <Avatar name={profile?.full_name} url={profile?.avatar_url} size={34} />
             <span className="hidden text-sm font-semibold sm:block">{profile?.full_name}</span>
           </Link>
@@ -114,9 +115,9 @@ export function PageHeader({ n, title, sub, actions }: { n?: string; title: stri
 
 export function Table({ head, children, empty }: { head: ReactNode[]; children: ReactNode; empty?: boolean }) {
   return (
-    <div className="overflow-x-auto rounded-2xl border border-line bg-white">
+    <div className="admin-table overflow-x-auto rounded-2xl border border-line bg-white">
       <table className="w-full min-w-[720px] text-left text-sm">
-        <thead className="border-b border-line bg-stone-50 text-xs uppercase tracking-wide text-muted">
+        <thead className="border-b border-line bg-brand-50/50 text-xs uppercase tracking-wide text-muted">
           <tr>{head.map((h, i) => <th key={i} className="px-4 py-3 font-semibold">{h}</th>)}</tr>
         </thead>
         <tbody className="divide-y divide-line">{children}</tbody>
@@ -132,8 +133,8 @@ export const Td = ({ children, className }: { children?: ReactNode; className?: 
 export function StatCard({ label, value, icon, tone = 'brand', hint }: { label: string; value: ReactNode; icon: ReactNode; tone?: 'brand' | 'blue' | 'green' | 'amber' | 'red'; hint?: ReactNode }) {
   const t = { brand: 'bg-brand-50 text-brand-600', blue: 'bg-sky-50 text-sky-600', green: 'bg-emerald-50 text-emerald-600', amber: 'bg-amber-50 text-amber-600', red: 'bg-red-50 text-red-600' }[tone];
   return (
-    <div className="flex items-center gap-4 rounded-2xl border border-line bg-white p-4">
-      <div className={cx('flex size-12 items-center justify-center rounded-2xl', t)}>{icon}</div>
+    <div className="admin-stat flex items-center gap-4 rounded-2xl border border-line bg-white p-4">
+      <div className={cx('flex size-12 items-center justify-center rounded-full', t)}>{icon}</div>
       <div className="min-w-0">
         <p className="text-2xl font-black tabular-nums">{value}</p>
         <p className="truncate text-sm text-muted">{label}</p>

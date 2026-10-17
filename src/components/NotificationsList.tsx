@@ -41,7 +41,7 @@ export function NotificationsList() {
                 <div className="min-w-0 flex-1">
                   <p className={cx('text-sm', !n.read && 'font-semibold')}>{n.title}</p>
                   {n.body && <p className="text-sm text-muted">{n.body}</p>}
-                  <p className="mt-0.5 text-xs text-stone-400">{timeAgo(n.created_at, lang)}</p>
+                  <p className="mt-0.5 text-xs text-slate-400">{timeAgo(n.created_at, lang)}</p>
                 </div>
               </div>
             );

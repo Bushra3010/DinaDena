@@ -59,7 +59,7 @@ function Workers() {
       {loading && !data ? <PageLoader /> : (
         <Table empty={!filtered.length} head={['Worker', 'Skills', 'Area', 'Rating', 'Jobs', 'Available', 'Status', 'Joined', '']}>
           {filtered.map((r) => (
-            <tr key={r.user_id} className="hover:bg-stone-50">
+            <tr key={r.user_id} className="hover:bg-brand-50">
               <Td><div className="flex items-center gap-2"><Avatar name={r.person?.full_name} url={r.person?.avatar_url} size={34} /><div><p className="font-medium">{r.person?.full_name}</p><p className="text-xs text-muted">{r.person?.phone}</p></div></div></Td>
               <Td className="max-w-48 text-xs">{skillNames(r.category_ids)}</Td>
               <Td>{r.home_area}</Td>

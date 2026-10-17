@@ -48,7 +48,7 @@ function WorkerSearch() {
     <div className="pb-6">
       <TopBar title={t('workers_near_you')} back="/c" sub={<span className="inline-flex items-center gap-1"><MapPin className="size-3" />{place.area}</span>}
         right={<button type="button" aria-label={t('filters')} aria-expanded={showFilters} onClick={() => setShowFilters((s) => !s)}
-          className="flex size-11 items-center justify-center rounded-full hover:bg-stone-100"><SlidersHorizontal className="size-5" /></button>} />
+          className="flex size-11 items-center justify-center rounded-full hover:bg-brand-50"><SlidersHorizontal className="size-5" /></button>} />
 
       <div className="no-scrollbar flex gap-2 overflow-x-auto bg-white px-4 py-3">
         {categories.map((c) => (

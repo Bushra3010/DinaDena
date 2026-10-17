@@ -92,7 +92,7 @@ function WorkerProfile() {
                     <Stars value={r.rating} />
                   </div>
                   {r.comment && <p className="mt-1 text-sm text-muted">{r.comment}</p>}
-                  <p className="mt-0.5 text-xs text-stone-400">{timeAgo(r.created_at, lang)}</p>
+                  <p className="mt-0.5 text-xs text-slate-400">{timeAgo(r.created_at, lang)}</p>
                 </li>
               ))}
             </ul>

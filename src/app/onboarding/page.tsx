@@ -51,7 +51,7 @@ function Onboarding() {
   ];
 
   return (
-    <div className="mx-auto min-h-dvh max-w-[440px] bg-white px-5 pb-10 pt-8">
+    <div className="auth-frame mx-auto min-h-dvh max-w-[440px] bg-white px-5 pb-10 pt-8">
       <Logo />
       <form onSubmit={submit} className="mt-10 space-y-6">
         <h1 className="text-2xl font-extrabold">{t('setup_title')}</h1>

@@ -175,7 +175,7 @@ export default function CustomerJob() {
                 <div className="mb-1.5 flex justify-between text-sm font-semibold">
                   <span>{t('workers_accepted', { n: confirmed.length, m: job.workers_needed })}</span>
                 </div>
-                <div className="h-2 overflow-hidden rounded-full bg-stone-200">
+                <div className="h-2 overflow-hidden rounded-full bg-slate-200">
                   <div className="h-full rounded-full bg-brand-500 transition-all" style={{ width: `${(confirmed.length / job.workers_needed) * 100}%` }} />
                 </div>
                 <p className="mt-2 text-xs text-muted">{t('notifying_workers')}</p>

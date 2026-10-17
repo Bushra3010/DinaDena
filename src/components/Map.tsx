@@ -27,12 +27,12 @@ export type MapProps = {
 // Leaflet touches `window`, so it only loads in the browser.
 const MapInner = dynamic(() => import('./MapInner'), {
   ssr: false,
-  loading: () => <div className="size-full animate-pulse bg-stone-200" />,
+  loading: () => <div className="size-full animate-pulse bg-slate-200" />,
 });
 
 export function MapView({ className, ...props }: MapProps & { className?: string }) {
   return (
-    <div className={cx('relative isolate overflow-hidden rounded-2xl border border-line bg-stone-100', className)}>
+    <div className={cx('relative isolate overflow-hidden rounded-2xl border border-line bg-brand-50', className)}>
       <MapInner {...props} />
     </div>
   );

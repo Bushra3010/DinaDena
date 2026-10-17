@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { ClipboardList, House, UserRound, Wallet } from 'lucide-react';
+import { ChartNoAxesColumn, House, Search, UserRound } from 'lucide-react';
 import { IncomingRequests } from '@/components/worker/IncomingRequests';
 import { LocationSharer } from '@/components/worker/LocationSharer';
 import { MobileShell } from '@/components/MobileShell';
@@ -15,8 +15,8 @@ export default function WorkerLayout({ children }: { children: React.ReactNode }
   return (
     <MobileShell role="worker" overlay={<WorkerBackground />} nav={[
       { href: '/w', label: t('nav_home'), icon: House, exact: true },
-      { href: '/w/jobs', label: t('nav_jobs'), icon: ClipboardList },
-      { href: '/w/earnings', label: t('nav_earnings'), icon: Wallet },
+      { href: '/w/jobs', label: t('nav_jobs'), icon: Search },
+      { href: '/w/earnings', label: t('nav_earnings'), icon: ChartNoAxesColumn },
       { href: '/w/profile', label: t('nav_profile'), icon: UserRound },
     ]}>
       <RegistrationGate>{children}</RegistrationGate>
