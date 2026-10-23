@@ -25,7 +25,7 @@ export default function NearbyJobs() {
   const categories = useCategories();
   const { data: me } = useMyWorker(profile?.id);
   const [view, setView] = useState<'list' | 'map'>('list');
-  const [radius, setRadius] = useState(5);
+  const [radius, setRadius] = useState(10);
 
   const { data, loading, reload } = useLoad(() => rpc<NearbyJob[]>('nearby_open_jobs', { p_radius_km: radius }), [radius]);
   useRealtime('jobs', 'status=eq.open', reload);

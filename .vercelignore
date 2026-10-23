@@ -1,0 +1,6 @@
+android
+capacitor
+tests/output
+supabase/.temp
+.env*
+!.env.example

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { ArrowRight, Bell, ChevronRight, CircleX, ClipboardCheck, Clock, MapPin, Star } from 'lucide-react';
+import { ArrowRight, BadgeCheck, Bell, ChevronRight, CircleX, ClipboardCheck, Clock, MapPin, Star } from 'lucide-react';
 import { CategoryIcon } from '@/components/CategoryIcon';
 import { WorkerJobCard } from '@/components/worker/WorkerJobCard';
 import { useUnreadCount } from '@/components/MobileShell';
@@ -41,7 +41,7 @@ export default function WorkerHome() {
   useRealtime('bookings', `worker_id=eq.${profile!.id}`, reload);
   useRealtime('notifications', `user_id=eq.${profile!.id}`, reloadMe);
 
-  const { data: nearby, reload: reloadNearby } = useLoad(() => rpc<NearbyJob[]>('nearby_open_jobs', { p_radius_km: 5 }), [profile?.id]);
+  const { data: nearby, reload: reloadNearby } = useLoad(() => rpc<NearbyJob[]>('nearby_open_jobs', { p_radius_km: 10 }), [profile?.id]);
   useRealtime('jobs', 'status=eq.open', reloadNearby);
 
   if (!me) return <PageLoader />;
@@ -72,6 +72,7 @@ export default function WorkerHome() {
         <section className="worker-greeting" style={{ padding: '12px 16px' }}>
           <p className="text-sm">{lang === 'hi' ? 'नमस्ते,' : 'Good ' + (new Date().getHours() < 12 ? 'morning,' : new Date().getHours() < 17 ? 'afternoon,' : 'evening,')}</p>
           <h1 className="mt-0.5 text-2xl font-bold leading-tight tracking-tight">{profile?.full_name?.split(' ')[0]}</h1>
+          {wp.verified && <p className="mt-0.5 flex items-center gap-1 text-sm font-semibold text-emerald-700"><BadgeCheck className="size-4" />{t('verified_worker')}</p>}
           <p className="mt-1 text-[13px] leading-snug text-muted">{lang === 'hi' ? 'स्थानीय काम। अपने लोग। बेहतर दिन।' : 'Find local work. Real people. Better days.'}</p>
         </section>
 

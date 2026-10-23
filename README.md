@@ -1,14 +1,14 @@
 # DiNaDeNa — Chowk to Home
 
-Demo build of the DiNaDeNa customer app, worker app and admin panel. It follows the PRD in
-[`docs/`](docs/) and the three design boards. Everything is one Next.js app backed by Supabase.
+Demo build of the DiNaDeNa customer app, worker app and admin panel. It follows the client's PRD and the three design boards
+(customer, worker, admin), which are kept outside this repo. Everything is one Next.js app backed by Supabase.
 
 | Area | Routes | Design board |
 |---|---|---|
 | Welcome, language, OTP login, onboarding | `/welcome`, `/login`, `/onboarding` | PRD screens 01–02 |
-| Customer app (mobile layout) | `/c/*` | `docs/Customer App Design.png` |
-| Worker app (mobile layout) | `/w/*` | `docs/Worker App Design.webp` |
-| Admin console (desktop) | `/admin/*` | `docs/Admin Design.png` |
+| Customer app (mobile layout) | `/c/*` | Customer app board |
+| Worker app (mobile layout) | `/w/*` | Worker app board |
+| Admin console (desktop) | `/admin/*` | Admin board |
 
 ## How it works
 
@@ -80,6 +80,7 @@ Add the Supabase keys below and the app switches to the real backend automatical
    npm run db:migrate   # applies supabase/migrations/*.sql
    npm run db:seed      # demo users, 8 trades, 14 workers, sample jobs
    ```
+   On Node 20 the seed script needs `NODE_OPTIONS=--experimental-websocket`. Node 22+ needs nothing extra.
 4. **Turn on phone login** (Authentication → Sign In / Providers → Phone):
    - Enable the Phone provider.
    - Pick Twilio as the SMS provider. Placeholder values are fine for the demo.
@@ -99,6 +100,20 @@ With `NEXT_PUBLIC_DEMO_MODE=true`, the login screen lists one-tap demo logins.
 | Worker | 99999 10011 | Sunita Devi: cleaning |
 | Worker | 99999 10013 | Pappu Ram: **pending verification** (for the admin approval demo) |
 | Admin | 99999 00000 | |
+
+## Android app (Capacitor)
+
+The Android app is a Capacitor shell that loads the hosted web app, so web deploys reach the app without a new APK.
+
+1. Deploy the web app (for example on Vercel) and note its URL.
+2. Install a JDK 21 and Android Studio.
+3. Sync and open the project:
+   ```bash
+   CAP_SERVER_URL=https://your-deployed-url npm run android:sync
+   npm run android:open    # build / run from Android Studio
+   ```
+
+`capacitor/www/` holds only the offline fallback page.
 
 ## Demo script (PRD "demo is done when…")
 
@@ -159,7 +174,7 @@ Use two browser windows: a normal one and a private one.
 - **Cancellation after acceptance:** fee, refund or penalty? Today a customer can cancel only before any worker is on the way, with no fee.
 - **Customer wallet:** real balance with top-up, or UPI at payment time only? The demo pays per job; `wallet_ledger` holds worker earnings.
 - **Launch cities:** the demo is set up for Jaipur (`src/lib/geo.ts`).
-- **Still to build:** Android/Capacitor build, push notifications, live SMS, Razorpay.
+- **Still to build:** a signed Android release (the Capacitor shell is set up), push notifications, live SMS, Razorpay.
 
 ## Project layout
 
@@ -169,5 +184,5 @@ scripts/               migrate.ts, seed.ts
 src/lib/               supabase client, auth, i18n (English + Hindi), hooks, geo, types
 src/components/        UI kit, maps, shells, worker background tasks, admin pieces
 src/app/c|w|admin/     customer, worker and admin screens
-docs/                  PRD and design boards
+android/, capacitor/   Capacitor Android shell and its offline fallback page
 ```
