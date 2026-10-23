@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Search } from 'lucide-react';
 import { PageHeader, Table, Td } from '@/components/admin/AdminShell';
 import { Badge, Button, Chip, Input, PageLoader, statusTone } from '@/components/ui';
-import { dateTime, rupees } from '@/lib/format';
+import { dateTime, formatPhone, rupees } from '@/lib/format';
 import { useCategories, useLoad, useRealtime } from '@/lib/hooks';
 import { supabase } from '@/lib/supabase';
 import type { Booking, Job, JobStatus } from '@/lib/types';
@@ -58,7 +58,7 @@ export default function LiveRequests() {
             return (
               <tr key={j.id} className="hover:bg-brand-50">
                 <Td className="font-mono text-xs font-semibold">{j.code}</Td>
-                <Td><p className="font-medium">{c?.full_name}</p><p className="text-xs text-muted">{c?.phone}</p></Td>
+                <Td><p className="font-medium">{c?.full_name}</p><p className="text-xs text-muted">{formatPhone(c?.phone)}</p></Td>
                 <Td>{j.area}</Td>
                 <Td><p>{j.title}</p><p className="text-xs text-muted">{categories.find((x) => x.id === j.category_id)?.name_en} · {j.job_type}</p></Td>
                 <Td className="tabular-nums">{bs.length}/{j.workers_needed}</Td>

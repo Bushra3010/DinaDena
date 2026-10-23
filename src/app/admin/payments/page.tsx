@@ -27,18 +27,26 @@ export default function Payments() {
       supabase.from('bookings').select('platform_fee').not('paid_at', 'is', null),
     ]);
     const ps = (pays ?? []) as Payment[];
-    const [{ data: jobs }, { data: people }] = await Promise.all([
+    const [{ data: jobs }, { data: bookings }] = await Promise.all([
       ps.length ? supabase.from('jobs').select('id, code').in('id', ps.map((p) => p.job_id)) : Promise.resolve({ data: [] }),
-      ps.length ? supabase.from('profiles').select('id, full_name').in('id', ps.map((p) => p.customer_id)) : Promise.resolve({ data: [] }),
+      ps.length ? supabase.from('bookings').select('id, worker_id').in('id', ps.map((p) => p.booking_id)) : Promise.resolve({ data: [] }),
     ]);
+    const ids = [...ps.map((p) => p.customer_id), ...(bookings ?? []).map((b) => b.worker_id)];
+    const { data: people } = ids.length ? await supabase.from('profiles').select('id, full_name').in('id', ids) : { data: [] };
     return {
-      payments: ps, jobs: jobs ?? [], people: people ?? [],
+      payments: ps, jobs: jobs ?? [], bookings: bookings ?? [], people: people ?? [],
       collected: (all ?? []).filter((p) => p.status === 'success').reduce((s, p) => s + p.amount, 0),
       refunded: (all ?? []).filter((p) => p.status === 'refunded').reduce((s, p) => s + p.amount, 0),
       payouts: (ledger ?? []).reduce((s, l) => s + l.amount, 0),
       fees: (fees ?? []).reduce((s, b) => s + b.platform_fee, 0),
     };
   }, [filter]);
+
+  // A job payment is stored as one row per worker booking, so each row names its worker.
+  const workerName = (bookingId: string) => {
+    const b = data?.bookings.find((x) => x.id === bookingId);
+    return data?.people.find((x) => x.id === b?.worker_id)?.full_name;
+  };
 
   const refund = async (bookingId: string) => {
     setBusy(bookingId);
@@ -68,12 +76,13 @@ export default function Payments() {
             {FILTERS.map((f) => <Chip key={f ?? 'all'} active={filter === f} onClick={() => setFilter(f)}>{f ?? 'All'}</Chip>)}
           </div>
           {error && <Alert tone="red" className="mb-3">{error}</Alert>}
-          <Table empty={!data.payments.length} head={['Payment ref', 'Job', 'Customer', 'Method', 'Amount', 'Date', 'Status', '']}>
+          <Table empty={!data.payments.length} head={['Payment ref', 'Job', 'Customer', 'Worker', 'Method', 'Amount', 'Date', 'Status', '']}>
             {data.payments.map((p) => (
               <tr key={p.id}>
                 <Td className="font-mono text-xs">{p.gateway_payment_id ?? p.gateway_order_id}</Td>
                 <Td><Link href={`/admin/jobs/${p.job_id}`} className="font-mono text-xs font-semibold text-brand-600">{data.jobs.find((j) => j.id === p.job_id)?.code}</Link></Td>
                 <Td>{data.people.find((x) => x.id === p.customer_id)?.full_name}</Td>
+                <Td>{workerName(p.booking_id)}</Td>
                 <Td className="uppercase">{p.method} · {p.gateway}</Td>
                 <Td className="tabular-nums">{rupees(p.amount)}</Td>
                 <Td className="whitespace-nowrap text-xs text-muted">{dateTime(p.created_at)}</Td>

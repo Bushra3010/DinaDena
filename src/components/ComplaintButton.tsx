@@ -9,8 +9,8 @@ import { Alert, Button, Field, Modal, Select, Textarea } from './ui';
 
 const TOPICS: TKey[] = ['topic_late', 'topic_noshow', 'topic_quality', 'topic_payment', 'topic_behaviour', 'topic_other'];
 
-export function ComplaintButton({ jobId, bookingId, label, variant = 'outline', full = true }: {
-  jobId?: string; bookingId?: string; label?: string; variant?: 'outline' | 'danger' | 'soft'; full?: boolean;
+export function ComplaintButton({ jobId, bookingId, label, variant = 'outline', full = true, size }: {
+  jobId?: string; bookingId?: string; label?: string; variant?: 'outline' | 'danger' | 'soft' | 'ghost'; full?: boolean; size?: 'sm';
 }) {
   const { t } = useI18n();
   const { profile } = useAuth();
@@ -39,7 +39,7 @@ export function ComplaintButton({ jobId, bookingId, label, variant = 'outline', 
 
   return (
     <>
-      <Button variant={variant} full={full} icon={<Flag className="size-4" />} onClick={() => { setOpen(true); setDone(false); setText(''); setError(null); }}>
+      <Button variant={variant} full={full} size={size} icon={<Flag className="size-4" />} onClick={() => { setOpen(true); setDone(false); setText(''); setError(null); }}>
         {label ?? t('raise_complaint')}
       </Button>
       <Modal open={open} onClose={() => setOpen(false)} title={label ?? t('raise_complaint')}>

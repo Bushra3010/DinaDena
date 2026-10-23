@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Search } from 'lucide-react';
 import { PageHeader, Table, Td } from '@/components/admin/AdminShell';
 import { Avatar, Input, PageLoader } from '@/components/ui';
-import { dateOnly, rupees } from '@/lib/format';
+import { dateOnly, formatPhone, rupees } from '@/lib/format';
 import { useLoad } from '@/lib/hooks';
 import { supabase } from '@/lib/supabase';
 import type { Profile } from '@/lib/types';
@@ -37,7 +37,7 @@ export default function Customers() {
           {rows.map((r) => (
             <tr key={r.id}>
               <Td><div className="flex items-center gap-2"><Avatar name={r.full_name} url={r.avatar_url} size={32} /><span className="font-medium">{r.full_name ?? '—'}</span></div></Td>
-              <Td>{r.phone}</Td>
+              <Td className="whitespace-nowrap">{formatPhone(r.phone)}</Td>
               <Td className="uppercase">{r.language}</Td>
               <Td className="tabular-nums">{r.jobs}</Td>
               <Td className="tabular-nums">{rupees(r.spent)}</Td>

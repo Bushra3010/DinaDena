@@ -35,11 +35,15 @@ export default function MyBookings() {
       ? await supabase.from('bookings').select('*').in('job_id', js.map((j) => j.id))
       : { data: [] };
     const bs = (bookings ?? []) as Booking[];
-    const { data: names } = bs.length
-      ? await supabase.from('public_profiles').select('id, full_name, avatar_url').in('id', bs.map((b) => b.worker_id))
-      : { data: [] };
+    const [{ data: names }, { data: reviews }] = bs.length
+      ? await Promise.all([
+        supabase.from('public_profiles').select('id, full_name, avatar_url').in('id', bs.map((b) => b.worker_id)),
+        supabase.from('reviews').select('booking_id').eq('from_user', profile!.id).in('booking_id', bs.map((b) => b.id)),
+      ])
+      : [{ data: [] }, { data: [] }];
     return {
       jobs: js.slice(0, pages * PAGE), more: js.length > pages * PAGE, bookings: bs,
+      reviewed: new Set((reviews ?? []).map((r) => r.booking_id as string)),
       names: Object.fromEntries((names ?? []).map((n) => [n.id, n])) as Record<string, { full_name: string | null; avatar_url: string | null }>,
     };
   }, [tab, pages, profile?.id]);
@@ -62,6 +66,7 @@ export default function MyBookings() {
         ) : data.jobs.map((j) => {
           const cat = categories.find((c) => c.id === j.category_id);
           const bs = data.bookings.filter((b) => b.job_id === j.id && !['rejected', 'expired', 'cancelled'].includes(b.status));
+          const unrated = bs.some((b) => b.status === 'completed' && !data.reviewed.has(b.id));
           const total = j.status === 'completed'
             ? bs.reduce((s, b) => s + b.amount + b.platform_fee, 0)
             : (j.rate_per_worker + j.platform_fee) * j.workers_needed;
@@ -93,9 +98,9 @@ export default function MyBookings() {
                 </div>
               </Link>
               {j.status === 'completed' && (
-                <div className="mt-3 grid grid-cols-2 gap-2">
+                <div className={`mt-3 grid gap-2 ${unrated ? 'grid-cols-2' : 'grid-cols-1'}`}>
                   <LinkButton href={`/c/jobs/${j.id}`} variant="outline" size="sm" icon={<Receipt className="size-4" />}>{t('view_invoice')}</LinkButton>
-                  <LinkButton href={`/c/jobs/${j.id}`} variant="soft" size="sm" icon={<Star className="size-4" />}>{t('rate_workers')}</LinkButton>
+                  {unrated && <LinkButton href={`/c/jobs/${j.id}`} variant="soft" size="sm" icon={<Star className="size-4" />}>{bs.length > 1 ? t('rate_workers') : t('rate_worker')}</LinkButton>}
                 </div>
               )}
               {(j.status === 'completed' || j.status === 'cancelled') && (

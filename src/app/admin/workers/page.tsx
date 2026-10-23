@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { Ban, Check, FileText, Search, X } from 'lucide-react';
 import { PageHeader, Table, Td } from '@/components/admin/AdminShell';
 import { Alert, Avatar, Badge, Button, Card, Chip, Field, Input, KeyValue, Modal, PageLoader, Stars, statusTone, Textarea } from '@/components/ui';
-import { dateOnly, rupees } from '@/lib/format';
+import { dateOnly, formatPhone, rupees } from '@/lib/format';
 import { useCategories, useLoad } from '@/lib/hooks';
 import { rpc, supabase } from '@/lib/supabase';
 import type { Profile, WorkerPrivate, WorkerProfile, WorkerStatus } from '@/lib/types';
@@ -60,7 +60,7 @@ function Workers() {
         <Table empty={!filtered.length} head={['Worker', 'Skills', 'Area', 'Rating', 'Jobs', 'Available', 'Status', 'Joined', '']}>
           {filtered.map((r) => (
             <tr key={r.user_id} className="hover:bg-brand-50">
-              <Td><div className="flex items-center gap-2"><Avatar name={r.person?.full_name} url={r.person?.avatar_url} size={34} /><div><p className="font-medium">{r.person?.full_name}</p><p className="text-xs text-muted">{r.person?.phone}</p></div></div></Td>
+              <Td><div className="flex items-center gap-2"><Avatar name={r.person?.full_name} url={r.person?.avatar_url} size={34} /><div><p className="font-medium">{r.person?.full_name}</p><p className="text-xs text-muted">{formatPhone(r.person?.phone)}</p></div></div></Td>
               <Td className="max-w-48 text-xs">{skillNames(r.category_ids)}</Td>
               <Td>{r.home_area}</Td>
               <Td><Stars value={r.rating_avg} count={r.rating_count} /></Td>
@@ -116,11 +116,11 @@ function WorkerModal({ row, skills, onClose, onChanged }: { row: Row; skills: st
       <div className="space-y-4">
         <div className="flex items-center gap-3">
           <Avatar name={row.person?.full_name} url={row.person?.avatar_url} size={56} />
-          <div><p className="text-sm text-muted">{row.person?.phone}</p><Badge tone={statusTone[row.status]}>{row.status}</Badge></div>
+          <div><p className="text-sm text-muted">{formatPhone(row.person?.phone)}</p><Badge tone={statusTone[row.status]}>{row.status}</Badge></div>
         </div>
         <Card className="p-3">
           <KeyValue k="Skills" v={<span className="text-right">{skills}</span>} />
-          <KeyValue k="Experience" v={`${row.experience_years} years`} />
+          <KeyValue k="Experience" v={`${row.experience_years} year${row.experience_years === 1 ? '' : 's'}`} />
           <KeyValue k="Home area" v={row.home_area} />
           <KeyValue k="ID document" v={row.priv?.id_doc_path
             ? <button type="button" onClick={viewDoc} className="inline-flex items-center gap-1 font-semibold text-brand-600"><FileText className="size-4" />{row.priv.id_doc_type}</button>

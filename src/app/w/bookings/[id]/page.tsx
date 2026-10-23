@@ -218,7 +218,7 @@ export default function WorkerBooking() {
               </div>
             </Card>
             {customerCard}
-            <Card className="flex items-center gap-3 p-4"><Wallet className="size-12 rounded-full bg-brand-50 p-3 text-brand-500" /><div><p className="text-sm font-bold">{lang === 'hi' ? 'अनुमानित कमाई' : 'Expected earnings'}</p><p className="mt-1 text-3xl font-bold text-brand-500">{rupees(b.amount)} <span className="text-sm font-normal text-muted">{t('per_worker')}</span></p></div></Card>
+            <Card className="flex items-center gap-3 p-4"><Wallet className="size-12 rounded-full bg-brand-50 p-3 text-brand-500" /><div><p className="text-sm font-bold">{t('expected_earnings')}</p><p className="mt-1 text-3xl font-bold text-brand-500">{rupees(b.amount + Math.ceil(((cat?.hourly_rate ?? 0) * b.extra_minutes_approved) / 60))} <span className="text-sm font-normal text-muted">{t('per_worker')}</span></p></div></Card>
             <Card className="border-brand-200 bg-brand-50 p-4">
               <p className="font-bold text-sky-900">{t('need_more_time')}</p>
               {b.extra_minutes_requested > 0 ? (

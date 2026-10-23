@@ -27,7 +27,7 @@ const w = (i: number, name: string, cats: string[], area: string, lat: number, l
            rating: number, count: number, status: 'approved' | 'pending' = 'approved', available = true): WorkerSeed => ({
   phone: `9199999100${String(i).padStart(2, '0')}`, name, role: 'worker', cats, area, lat, lng, exp, rating, count,
   jobs: count + Math.round(count * 0.15), status, available,
-  bio: `${exp} years of experience in ${cats.join(', ')} work around ${area}.`,
+  bio: `${exp} year${exp === 1 ? '' : 's'} of experience in ${cats.join(', ')} work around ${area}.`,
   upi: `${name.split(' ')[0].toLowerCase()}${i}@upi`,
 });
 export const workers: WorkerSeed[] = [

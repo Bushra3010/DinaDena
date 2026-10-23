@@ -341,7 +341,13 @@ const fns: Record<string, (a: Args, uid: string | null) => unknown> = {
         w.jobs_completed += 1;
         touch('worker_profiles', w);
       }
-      notify(b!.customer_id, 'Work completed', `Please pay ₹${amount + b!.platform_fee}`, `/c/jobs/${j.id}`);
+      // Ask for payment once, with the job total, when the last worker checks out.
+      const jobBookings = table('bookings').filter((x) => x.job_id === j.id);
+      const stillWorking = jobBookings.some((x) => ['accepted', 'on_the_way', 'in_progress'].includes(x.status));
+      const due = jobBookings.filter((x) => x.status === 'completed' && !x.paid_at).reduce((s, x) => s + x.amount + x.platform_fee, 0);
+      notify(b!.customer_id, 'Work completed',
+        stillWorking ? `${profile(b!.worker_id)?.full_name ?? 'Worker'} finished · ₹${amount + b!.platform_fee}` : `Please pay ₹${due}`,
+        `/c/jobs/${j.id}`);
     }
     touch('bookings', b!);
     table('booking_otps').splice(table('booking_otps').indexOf(o), 1);

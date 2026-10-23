@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import {
@@ -91,7 +90,12 @@ export default function CustomerJob() {
   const moving = bookings.filter((b) => b.status === 'on_the_way' || b.status === 'in_progress');
   const pendingRequest = job.job_type === 'daily' ? bookings.find((b) => b.status === 'requested') : undefined;
   const directEnded = job.job_type === 'daily' && bookings.length > 0 && bookings.every((b) => ENDED.includes(b.status));
-  const firstCheckIn = bookings.filter((b) => b.check_in_at && b.status === 'in_progress').map((b) => b.check_in_at!).sort()[0];
+  // The job clock runs from the first check-in until every worker has checked out.
+  const firstCheckIn = live ? bookings.filter((b) => b.check_in_at).map((b) => b.check_in_at!).sort()[0] : undefined;
+  // Approved overtime is billed at the hourly rate, up to what the customer approved.
+  const extraPay = (b: Booking) => Math.ceil(((cat?.hourly_rate ?? 0) * b.extra_minutes_approved) / 60);
+  const maxExtraMinutes = Math.max(0, ...active.map((b) => b.extra_minutes_approved));
+  const extraTotal = active.reduce((s, b) => s + extraPay(b), 0);
 
   const title = job.status === 'cancelled' ? job.code
     : allDone ? t('complete_job')
@@ -135,7 +139,7 @@ export default function CustomerJob() {
   return (
     <div className="pb-8">
       <TopBar title={title} back="/c" sub={`${job.code} · ${catName(cat)}`} right={
-        <Link href="/c/bookings" className="flex min-h-11 items-center px-2 text-sm font-semibold text-brand-600">{t('help')}</Link>
+        <ComplaintButton jobId={job.id} bookingId={bookings[0]?.id} label={t('help')} variant="ghost" size="sm" full={false} />
       } />
       <div className="space-y-4 p-4">
         {error && <Alert tone="red" icon={<TriangleAlert className="size-4" />}>{error}</Alert>}
@@ -203,7 +207,7 @@ export default function CustomerJob() {
             </div>
             <div className="text-right text-sm">
               <p className="text-muted">{t('estimated_time')}</p>
-              <p className="font-semibold">{duration(job.duration_minutes, lang)}</p>
+              <p className="font-semibold">{duration(job.duration_minutes + maxExtraMinutes, lang)}</p>
             </div>
           </Card>
         )}
@@ -302,8 +306,9 @@ export default function CustomerJob() {
           {!allDone && (
             <div className="mt-3 border-t border-line pt-3">
               <KeyValue k={`${t('labour_amount')} (${job.workers_needed} × ${rupees(job.rate_per_worker)})`} v={rupees(job.rate_per_worker * job.workers_needed)} />
+              {extraTotal > 0 && <KeyValue k={t('extra_time_approved')} v={`+${rupees(extraTotal)}`} />}
               <KeyValue k={t('platform_fee')} v={rupees(job.platform_fee * job.workers_needed)} />
-              <KeyValue strong k={t('total_amount')} v={rupees(totalEstimate)} />
+              <KeyValue strong k={t('total_amount')} v={rupees(totalEstimate + extraTotal)} />
             </div>
           )}
         </Card>

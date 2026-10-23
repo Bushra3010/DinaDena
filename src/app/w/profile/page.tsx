@@ -67,7 +67,7 @@ export default function WorkerProfilePage() {
           <div className="mt-4 grid w-full grid-cols-3 divide-x divide-line rounded-2xl border border-line">
             <div className="py-3"><p className="flex items-center justify-center gap-1 text-lg font-bold"><Star className="size-4 fill-amber-400 text-amber-400" />{Number(wp.rating_avg).toFixed(1)}</p><p className="text-xs text-muted">{wp.rating_count} {t('reviews')}</p></div>
             <div className="py-3"><p className="text-lg font-bold">{wp.jobs_completed}</p><p className="text-xs text-muted">{t('jobs_done')}</p></div>
-            <div className="py-3"><p className="text-lg font-bold">{wp.experience_years}</p><p className="text-xs text-muted">{t('experience')}</p></div>
+            <div className="py-3"><p className="text-lg font-bold">{t('years', { n: wp.experience_years })}</p><p className="text-xs text-muted">{t('experience')}</p></div>
           </div>
         </Card>
 

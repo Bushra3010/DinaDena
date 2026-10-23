@@ -8,7 +8,7 @@ import { PageHeader, Table, Td } from '@/components/admin/AdminShell';
 import { MapView, type MapMarker } from '@/components/Map';
 import { Alert, Avatar, Badge, Button, Card, cx, KeyValue, Modal, PageLoader, SectionTitle, statusTone, Textarea } from '@/components/ui';
 import { useAuth } from '@/lib/auth';
-import { dateTime, duration, rupees, timeOnly } from '@/lib/format';
+import { dateTime, duration, formatPhone, rupees, timeOnly } from '@/lib/format';
 import { useCategories, useLoad, useRealtime } from '@/lib/hooks';
 import { rpc, supabase } from '@/lib/supabase';
 import type { Booking, Job, Payment, Profile, WorkerLocation } from '@/lib/types';
@@ -85,7 +85,7 @@ export default function AdminJob() {
 
       <Card className="mb-4 grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-5">
         <div><p className="text-xs text-muted">Status</p><Badge tone={statusTone[job.status]}>{job.status.replace('_', ' ')}</Badge></div>
-        <div><p className="text-xs text-muted">Customer</p><p className="font-semibold">{customer?.full_name}</p><p className="text-xs text-muted">{customer?.phone}</p></div>
+        <div><p className="text-xs text-muted">Customer</p><p className="font-semibold">{customer?.full_name}</p><p className="text-xs text-muted">{formatPhone(customer?.phone)}</p></div>
         <div><p className="text-xs text-muted">Start</p><p className="font-semibold">{dateTime(job.start_at)}</p><p className="text-xs text-muted">{duration(job.duration_minutes)}</p></div>
         <div><p className="text-xs text-muted">Location</p><p className="font-semibold">{job.area}</p><p className="truncate text-xs text-muted">{job.address}</p></div>
         <div><p className="text-xs text-muted">Estimate</p><p className="font-semibold">{rupees((job.rate_per_worker + job.platform_fee) * job.workers_needed)}</p><p className="text-xs text-muted">{job.workers_needed} × {rupees(job.rate_per_worker)} + fee</p></div>
@@ -116,7 +116,7 @@ export default function AdminJob() {
               const paid = payments.find((p) => p.booking_id === b.id && (p.status === 'success' || p.status === 'refunded'));
               return (
                 <tr key={b.id}>
-                  <Td><div className="flex items-center gap-2"><Avatar name={w?.full_name} size={32} /><div><p className="font-medium">{w?.full_name}</p><p className="text-xs text-muted">{w?.phone}</p></div></div></Td>
+                  <Td><div className="flex items-center gap-2"><Avatar name={w?.full_name} size={32} /><div><p className="font-medium">{w?.full_name}</p><p className="text-xs text-muted">{formatPhone(w?.phone)}</p></div></div></Td>
                   <Td><Badge tone={statusTone[b.status]}>{b.status.replace(/_/g, ' ')}</Badge></Td>
                   <Td className="text-xs">{b.check_in_at ? timeOnly(b.check_in_at) : '—'}</Td>
                   <Td className="text-xs">{b.check_out_at ? timeOnly(b.check_out_at) : '—'}</Td>
@@ -134,7 +134,7 @@ export default function AdminJob() {
             <Card className="mt-4 p-5">
               <SectionTitle>Payments</SectionTitle>
               {payments.map((p) => (
-                <KeyValue key={p.id} k={<span className="font-mono text-xs">{p.gateway_payment_id ?? p.gateway_order_id} · {dateTime(p.created_at)}</span>}
+                <KeyValue key={p.id} k={<span className="text-xs"><span className="font-medium">{people.find((x) => x.id === bookings.find((b) => b.id === p.booking_id)?.worker_id)?.full_name}</span> · <span className="font-mono">{p.gateway_payment_id ?? p.gateway_order_id}</span> · {dateTime(p.created_at)}</span>}
                   v={<span className="flex items-center gap-2">{rupees(p.amount)}<Badge tone={statusTone[p.status]}>{p.status}</Badge></span>} />
               ))}
             </Card>

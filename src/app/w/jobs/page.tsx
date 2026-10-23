@@ -63,7 +63,7 @@ export default function NearbyJobs() {
             ]} />
         ) : !filtered.length ? (
           <Empty icon={<SearchX className="size-6" />} title={t('no_nearby_jobs')} />
-        ) : <><p className="font-bold">{filtered.length} {lang === 'hi' ? 'काम आपके पास' : 'jobs near you'}</p>{filtered.map((j) => <WorkerJobCard key={j.id} job={j} />)}</>}
+        ) : <><p className="font-bold">{t('jobs_near_you', { n: filtered.length })}</p>{filtered.map((j) => <WorkerJobCard key={j.id} job={j} />)}</>}
         <Link href="/w/bookings" className="block text-center text-sm font-semibold text-brand-600">{t('my_work')} →</Link>
       </div>
     </div>

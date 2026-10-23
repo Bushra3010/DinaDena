@@ -48,6 +48,7 @@ const en = {
   jobs_done: 'Jobs done',
   experience: 'Experience',
   years: '{n} years',
+  years_one: '{n} year',
 
   // Welcome & auth
   welcome_title: 'Hire skilled workers in minutes',
@@ -277,7 +278,12 @@ const en = {
   map_view: 'Map View',
   within_km: 'Within {n} km',
   workers_needed: '{n} workers needed',
-  slots_available: '{n} slot(s) open',
+  slots_available: '{n} slots open',
+  slots_available_one: '{n} slot open',
+  spots_available: '{n} spots available',
+  spots_available_one: '{n} spot available',
+  jobs_near_you: '{n} jobs near you',
+  jobs_near_you_one: '{n} job near you',
   estimated: 'estimated',
   no_nearby_jobs: 'No open jobs near you right now',
   go_online_hint: 'Turn on “available for work” to get job alerts',
@@ -307,6 +313,8 @@ const en = {
   request_extra: 'Request Extra Time (+{n} min)',
   extra_pending: 'Waiting for customer approval (+{n} min)',
   extra_approved: '+{n} min approved by customer',
+  extra_time_approved: 'Approved extra time (up to)',
+  expected_earnings: 'Expected earnings',
   end_work: 'End Work',
   check_out: 'Check Out',
   job_completed_w: 'Job Completed',
@@ -393,6 +401,7 @@ const hi: Record<TKey, string> = {
   jobs_done: 'पूरे काम',
   experience: 'अनुभव',
   years: '{n} साल',
+  years_one: '{n} साल',
 
   welcome_title: 'मिनटों में कुशल कारीगर बुलाएँ',
   welcome_sub: 'सत्यापित कारीगर, OTP हाज़िरी और UPI भुगतान',
@@ -615,6 +624,11 @@ const hi: Record<TKey, string> = {
   within_km: '{n} किमी में',
   workers_needed: '{n} मज़दूर चाहिए',
   slots_available: '{n} जगह खाली',
+  slots_available_one: '{n} जगह खाली',
+  spots_available: '{n} जगह उपलब्ध',
+  spots_available_one: '{n} जगह उपलब्ध',
+  jobs_near_you: '{n} काम आपके पास',
+  jobs_near_you_one: '{n} काम आपके पास',
   estimated: 'अनुमानित',
   no_nearby_jobs: 'अभी पास में कोई काम नहीं',
   go_online_hint: 'काम की सूचना पाने के लिए “उपलब्ध” चालू करें',
@@ -644,6 +658,8 @@ const hi: Record<TKey, string> = {
   request_extra: 'अतिरिक्त समय माँगें (+{n} मिनट)',
   extra_pending: 'ग्राहक की मंज़ूरी का इंतज़ार (+{n} मिनट)',
   extra_approved: 'ग्राहक ने +{n} मिनट मंज़ूर किए',
+  extra_time_approved: 'मंज़ूर अतिरिक्त समय (अधिकतम)',
+  expected_earnings: 'अनुमानित कमाई',
   end_work: 'काम खत्म करें',
   check_out: 'चेक आउट',
   job_completed_w: 'काम पूरा',
@@ -742,7 +758,9 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     lang,
     setLang,
     t: (key, vars) => {
-      let s: string = dict[lang][key] ?? en[key] ?? key;
+      // `<key>_one` is the singular form, used when vars.n is 1.
+      const one = vars?.n === 1 && `${key}_one` in en ? (`${key}_one` as TKey) : null;
+      let s: string = dict[lang][one ?? key] ?? en[one ?? key] ?? key;
       if (vars) for (const [k, v] of Object.entries(vars)) s = s.replaceAll(`{${k}}`, String(v));
       return s;
     },
