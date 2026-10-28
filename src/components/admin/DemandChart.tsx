@@ -5,7 +5,7 @@ import { useState } from 'react';
 type Day = { day: string; jobs: number; completed: number };
 // Teal and indigo keep the two chart series distinct on light surfaces.
 const SERIES = [
-  { key: 'jobs' as const, label: 'Jobs posted', color: '#009caf' },
+  { key: 'jobs' as const, label: 'Jobs posted', color: '#ea580c' },
   { key: 'completed' as const, label: 'Bookings completed', color: '#6366b5' },
 ];
 
@@ -32,22 +32,22 @@ export function DemandChart({ days }: { days: Day[] }) {
         <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label="Jobs posted and completed over the last 7 days">
           {ticks.map((t) => (
             <g key={t}>
-              <line x1={PAD_L} x2={W} y1={y(t)} y2={y(t)} stroke="#e8eff3" />
-              <text x={PAD_L - 6} y={y(t) + 4} textAnchor="end" fontSize="10" fill="#5d7a9a">{t}</text>
+              <line x1={PAD_L} x2={W} y1={y(t)} y2={y(t)} stroke="#f2e8e1" />
+              <text x={PAD_L - 6} y={y(t) + 4} textAnchor="end" fontSize="10" fill="#7a6355">{t}</text>
             </g>
           ))}
           {days.map((d, i) => {
             const x0 = PAD_L + i * group + (group - barW * 2 - 2) / 2;
             return (
               <g key={d.day} onMouseEnter={() => setHover(i)} onMouseLeave={() => setHover(null)}>
-                <rect x={PAD_L + i * group} y={PAD_T} width={group} height={plotH} fill={hover === i ? '#edf8fa' : 'transparent'} />
+                <rect x={PAD_L + i * group} y={PAD_T} width={group} height={plotH} fill={hover === i ? '#fdf3ec' : 'transparent'} />
                 {SERIES.map((s, k) => {
                   const v = d[s.key];
                   const h = Math.max(v ? 2 : 0, PAD_T + plotH - y(v));
                   return <path key={s.key} fill={s.color}
                     d={roundedTop(x0 + k * (barW + 2), PAD_T + plotH - h, barW, h, Math.min(4, h))} />;
                 })}
-                <text x={PAD_L + i * group + group / 2} y={H - 6} textAnchor="middle" fontSize="10" fill="#5d7a9a">{label(d.day)}</text>
+                <text x={PAD_L + i * group + group / 2} y={H - 6} textAnchor="middle" fontSize="10" fill="#7a6355">{label(d.day)}</text>
               </g>
             );
           })}

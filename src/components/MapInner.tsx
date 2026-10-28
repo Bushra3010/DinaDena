@@ -7,7 +7,7 @@ import { MapContainer, Marker, Polyline, TileLayer, Tooltip, useMap, useMapEvent
 import type { MapMarker, MapProps } from './Map';
 
 const pinColors: Record<MapMarker['kind'], string> = {
-  home: '#063e50', job: '#007181', worker: '#2563eb', me: '#2563eb',
+  home: '#3a2318', job: '#d9540b', worker: '#2563eb', me: '#2563eb',
 };
 
 function icon(m: MapMarker) {
@@ -55,7 +55,7 @@ export default function MapInner({ center, zoom = 13, markers = [], route, fit =
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       {route && route.length > 1 && (
-        <Polyline positions={route.map((p) => [p.lat, p.lng])} pathOptions={{ color: '#007181', weight: 4, dashArray: '8 8' }} />
+        <Polyline positions={route.map((p) => [p.lat, p.lng])} pathOptions={{ color: '#d9540b', weight: 4, dashArray: '8 8' }} />
       )}
       {markers.map((m) => (
         <Marker key={m.id} position={[m.lat, m.lng]} icon={icon(m)}
